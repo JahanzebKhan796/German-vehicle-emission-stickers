@@ -85,6 +85,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   const [dpf, setDpf] = useState<string>("");
   const [emissionKey, setEmissionKey] = useState("");
   const [result, setResult] = useState<string | null>(null);
+  const [helpExpanded, setHelpExpanded] = useState(false);
 
   const isDiesel = fuelType === "Diesel";
 
@@ -136,11 +137,8 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   }
 
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center p-6">
-      <div className="w-full max-w-md space-y-6">
-        <h1 className="text-2xl font-bold text-black text-center">
-          Vehicle dust sticker
-        </h1>
+    <main className="min-h-screen bg-white flex justify-start pt-0 px-6 pb-6">
+      <div className="w-full max-w-md">
         <form
           className="rounded-xl bg-white shadow-lg border border-zinc-300 p-8 space-y-8"
           onSubmit={handleSubmit}
@@ -245,6 +243,77 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               <p className="text-sm text-amber-700">
                 Enter exactly 2 numeric digits.
               </p>
+            )}
+          </div>
+
+          {/* Expandable help: Where can I find the emissions key number? */}
+          <div className="border border-zinc-300 rounded-lg overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setHelpExpanded((v) => !v)}
+              className="w-full px-4 py-3 flex items-center justify-between text-left text-sm font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
+              aria-expanded={helpExpanded}
+            >
+              Where can I find the emissions key number?
+              <span
+                className={`shrink-0 ml-2 transition-transform ${helpExpanded ? "rotate-180" : ""}`}
+                aria-hidden
+              >
+                ▼
+              </span>
+            </button>
+            {helpExpanded && (
+              <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black text-sm">
+                <section className="space-y-2">
+                  <p className="font-bold">
+                    Old vehicle registration certificate (until 30.09.2005)
+                  </p>
+                  <p>
+                    The last two digits of the key number in the vehicle
+                    registration document (&quot;to 1&quot;):
+                  </p>
+                  <div className="rounded border border-zinc-200 overflow-hidden">
+                    <img
+                      src="/help/image1.png"
+                      alt="Old vehicle registration certificate showing key number 'to 1' with last two digits highlighted"
+                      className="w-full h-auto max-h-64 object-contain object-top-left"
+                    />
+                  </div>
+                </section>
+                <section className="space-y-2">
+                  <p className="font-bold">
+                    Registration certificate Part I (from 01.10.2005)
+                  </p>
+                  <p>
+                    In the registration certificate, the last two digits of
+                    field &quot;14.1&quot;:
+                  </p>
+                  <div className="rounded border border-zinc-200 overflow-hidden">
+                    <img
+                      src="/help/image2.png"
+                      alt="Registration certificate Part I showing field 14.1 with last two digits highlighted"
+                      className="w-full h-auto max-h-64 object-contain object-top-left"
+                    />
+                  </div>
+                </section>
+                <section className="space-y-2">
+                  <p className="font-bold">
+                    Does the vehicle registration document look different?
+                  </p>
+                  <p>
+                    On older vehicle registration documents, the emissions key
+                    number can also be found in the location marked in red in
+                    the illustration:
+                  </p>
+                  <div className="rounded border border-zinc-200 overflow-hidden">
+                    <img
+                      src="/help/image3.png"
+                      alt="Older vehicle registration document with emissions key number location marked in red"
+                      className="w-full h-auto max-h-64 object-contain object-top-left"
+                    />
+                  </div>
+                </section>
+              </div>
             )}
           </div>
 
