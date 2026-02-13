@@ -2,18 +2,24 @@
 
 import { useState } from "react";
 
-const VEHICLE_OPTIONS = ["Car", "Truck"] as const;
-const FUEL_OPTIONS = ["Petrol", "Diesel"] as const;
-const DPF_OPTIONS = [
-  "no DPF",
-  "PM01/PMK01",
-  "PM0/PMK0",
-  "PM1/PMK1",
-  "PM2/PMK2",
-  "PM3/PMK3",
-  "PM4/PMK4",
-  "PM5/PMK5",
-] as const;
+const VEHICLE_OPTIONS: { value: "Car" | "Truck"; label: string }[] = [
+  { value: "Car", label: "Pkw" },
+  { value: "Truck", label: "Lkw" },
+];
+const FUEL_OPTIONS: { value: "Petrol" | "Diesel"; label: string }[] = [
+  { value: "Petrol", label: "Benzin, Flüssiggas, Erdgas" },
+  { value: "Diesel", label: "Diesel" },
+];
+const DPF_OPTIONS: { value: string; label: string }[] = [
+  { value: "no DPF", label: "kein Partikelminderungssystem" },
+  { value: "PM01/PMK01", label: "PM01/PMK01" },
+  { value: "PM0/PMK0", label: "PM0/PMK0" },
+  { value: "PM1/PMK1", label: "PM1/PMK1" },
+  { value: "PM2/PMK2", label: "PM2/PMK2" },
+  { value: "PM3/PMK3", label: "PM3/PMK3" },
+  { value: "PM4/PMK4", label: "PM4/PMK4" },
+  { value: "PM5", label: "PM5" },
+];
 
 // Output value → square color (Tailwind background class)
 const VALUE_COLOR: Record<string, string> = {
@@ -24,25 +30,88 @@ const VALUE_COLOR: Record<string, string> = {
   "3*": "bg-yellow-400",
   "4": "bg-green-500",
   "4**": "bg-green-500",
+  "4***": "bg-green-500",
 };
 
 const UNSUPPORTED_MESSAGE =
-  "The selected combination of vehicle type, PM level/class, and emissions key number is not possible/not supported. Please check your entry!";
+  "Die gewählte Kombination von Fahrzeugart, PM-Stufe/-Klasse und Emissionsschlüsselnummer ist nicht möglich / nicht vorgesehen. Bitte überprüfen Sie die Eingabe!";
 
-/** Returns list of [displayValue, colorClass] for the result (handles "3*,4**" as two items). */
-function getResultItems(value: string): [string, string][] {
+const RESULT_MESSAGE: Record<string, string> = {
+  "0": "Ihr Fahrzeug kann leider keine Plakette erhalten.",
+  "1": "Ihr Fahrzeug kann leider keine Plakette erhalten.",
+  "2": 'Es kann eine Feinstaubplakette "2 rot" zugeteilt werden.',
+  "3": 'Es kann eine Feinstaubplakette "3 gelb" zugeteilt werden.',
+  "3*": 'Es kann eine Feinstaubplakette "3 gelb" zugeteilt werden.',
+  "4": 'Es kann eine Feinstaubplakette "4 grün" zugeteilt werden.',
+  "4**": 'Es kann eine Feinstaubplakette "4 grün" zugeteilt werden.',
+  "4***": 'Es kann eine Feinstaubplakette "4 grün" zugeteilt werden.',
+  "3*,4**":
+    'Fahrzeugen mit einem zulässigen Gesamtgewicht von höchstens 2500 kg kann eine Plakette der Schadstoffgruppe "3 gelb" zugeteilt werden. Fahrzeugen mit einem zulässigen Gesamtgewicht von über 2500 kg kann eine Plakette der Schadstoffgruppe "4 grün" zugeteilt werden.',
+};
+
+/** Returns the message to display for a result value, or null if none. */
+function getResultMessage(value: string): string | null {
   const trimmed = value.trim();
-  if (trimmed === "3*,4**") {
-    return [
-      ["3*", VALUE_COLOR["3*"]],
-      ["4**", VALUE_COLOR["4**"]],
-    ];
-  }
-  const color = VALUE_COLOR[trimmed] ?? "bg-zinc-400";
-  return [[trimmed, color]];
+  return RESULT_MESSAGE[trimmed] ?? null;
 }
 
-// Column indices: 0 = emission id, 1 = description, 2 = petrol, 3–10 = DPF (no DPF … PM5/PMK5)
+/** Map result value to sticker type(s) for circle display. 3* shows as 3, 4** and 4*** show as 4. */
+function getStickerTypes(value: string): ("1" | "2" | "3" | "4")[] {
+  const trimmed = value.trim();
+  if (trimmed === "3*,4**") return ["3", "4"];
+  if (trimmed === "0" || trimmed === "1") return ["1"];
+  if (trimmed === "2") return ["2"];
+  if (trimmed === "3" || trimmed === "3*") return ["3"];
+  if (trimmed === "4" || trimmed === "4**" || trimmed === "4***") return ["4"];
+  return [];
+}
+
+const STICKER_STYLES: Record<"1" | "2" | "3" | "4", { circle: string }> = {
+  "1": { circle: "border-zinc-300 bg-white" },
+  "2": { circle: "bg-red-500 border-red-500" },
+  "3": { circle: "bg-amber-400 border-amber-400" },
+  "4": { circle: "bg-green-500 border-green-500" },
+};
+
+function StickerCircle({ type }: { type: "1" | "2" | "3" | "4" }) {
+  const style = STICKER_STYLES[type];
+  const size = 80;
+
+  if (type === "1") {
+    return (
+      <div
+        className="shrink-0 rounded-full border-10 border-zinc-300 bg-white flex items-center justify-center"
+        style={{ width: size, height: size }}
+        aria-hidden
+      >
+        <span className="sr-only">Keine Plakette</span>
+        <svg
+          viewBox="0 0 24 24"
+          className="w-12 h-12 text-red-500"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        >
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`shrink-0 rounded-full border-10 flex flex-col items-center justify-start pt-2 pb-1 ${style.circle}`}
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
+      <span className="text-3xl font-bold leading-none text-white">{type}</span>
+      <div className="w-10 h-3 mt-1 bg-white/90 border border-white/50" />
+    </div>
+  );
+}
+
+// Column indices: 0 = emission id, 1 = description, 2 = petrol, 3–10 = DPF (no DPF … PM5)
 const DPF_TO_COLUMN_INDEX: Record<string, number> = {
   "no DPF": 3,
   "PM01/PMK01": 4,
@@ -51,7 +120,7 @@ const DPF_TO_COLUMN_INDEX: Record<string, number> = {
   "PM2/PMK2": 7,
   "PM3/PMK3": 8,
   "PM4/PMK4": 9,
-  "PM5/PMK5": 10,
+  PM5: 10,
 };
 
 function findRow(
@@ -143,23 +212,23 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {/* Vehicle type */}
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-black">
-              Vehicle type
+              Fahrzeugart
             </legend>
             <div className="flex gap-6">
               {VEHICLE_OPTIONS.map((option) => (
                 <label
-                  key={option}
+                  key={option.value}
                   className="flex items-center gap-2 cursor-pointer select-none"
                 >
                   <input
                     type="radio"
                     name="vehicleType"
-                    value={option}
-                    checked={vehicleType === option}
-                    onChange={() => setVehicleType(option)}
+                    value={option.value}
+                    checked={vehicleType === option.value}
+                    onChange={() => setVehicleType(option.value)}
                     className="w-4 h-4 text-black border-zinc-400 focus:ring-2 focus:ring-zinc-500"
                   />
-                  <span className="text-black">{option}</span>
+                  <span className="text-black">{option.label}</span>
                 </label>
               ))}
             </div>
@@ -168,26 +237,26 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {/* Fuel type */}
           <fieldset className="space-y-3">
             <legend className="text-sm font-semibold text-black">
-              Fuel type
+              Kraftstoffart
             </legend>
             <div className="flex gap-6">
               {FUEL_OPTIONS.map((option) => (
                 <label
-                  key={option}
+                  key={option.value}
                   className="flex items-center gap-2 cursor-pointer select-none"
                 >
                   <input
                     type="radio"
                     name="fuelType"
-                    value={option}
-                    checked={fuelType === option}
+                    value={option.value}
+                    checked={fuelType === option.value}
                     onChange={() => {
-                      setFuelType(option);
-                      if (option !== "Diesel") setDpf("");
+                      setFuelType(option.value);
+                      if (option.value !== "Diesel") setDpf("");
                     }}
                     className="w-4 h-4 text-black border-zinc-400 focus:ring-2 focus:ring-zinc-500"
                   />
-                  <span className="text-black">{option}</span>
+                  <span className="text-black">{option.label}</span>
                 </label>
               ))}
             </div>
@@ -200,7 +269,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 htmlFor="dpf"
                 className="block text-sm font-semibold text-black"
               >
-                Diesel Particulate Filter (DPF)
+                Partikelminderungssystem mit PM-Stufe
               </label>
               <select
                 id="dpf"
@@ -208,10 +277,10 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 onChange={(e) => setDpf(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 bg-white text-black focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
               >
-                <option value="">Select DPF</option>
+                <option value="">Auswählen</option>
                 {DPF_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
@@ -224,7 +293,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               htmlFor="emissionKey"
               className="block text-sm font-semibold text-black"
             >
-              Emission key number
+              Emissionsschlüssel-Nr.
             </label>
             <input
               id="emissionKey"
@@ -232,13 +301,13 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               inputMode="numeric"
               value={emissionKey}
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
-              placeholder="Enter 2 digits"
+              placeholder="Geben Sie 2 Ziffern ein"
               maxLength={2}
               className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
             {emissionKey.length > 0 && !emissionKeyValid && (
               <p className="text-sm text-amber-700">
-                Enter exactly 2 numeric digits.
+                Geben Sie genau 2 Ziffern ein.
               </p>
             )}
           </div>
@@ -251,7 +320,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               className="w-full px-4 py-3 flex items-center justify-between text-left text-sm font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
               aria-expanded={helpExpanded}
             >
-              Where can I find the emissions key number?
+              Wo finde ich die Emissionsschlüssel-Nr.?
               <span
                 className={`shrink-0 ml-2 transition-transform ${helpExpanded ? "rotate-180" : ""}`}
                 aria-hidden
@@ -263,11 +332,11 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black text-sm">
                 <section className="space-y-2">
                   <p className="font-bold">
-                    Old vehicle registration certificate (until 30.09.2005)
+                    Alter Fahrzeugschein (bis 30.09.2005)
                   </p>
                   <p>
-                    The last two digits of the key number in the vehicle
-                    registration document (&quot;to 1&quot;):
+                    Im Fahrzeugschein die letzten beiden Stellen der
+                    Schlüsselnr. "zu 1":
                   </p>
                   <div className="rounded border border-zinc-200 overflow-hidden">
                     <img
@@ -279,11 +348,11 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 </section>
                 <section className="space-y-2">
                   <p className="font-bold">
-                    Registration certificate Part I (from 01.10.2005)
+                    Zulassungsbescheinigung I (ab 01.10.2005)
                   </p>
                   <p>
-                    In the registration certificate, the last two digits of
-                    field &quot;14.1&quot;:
+                    In der Zulassungsbescheinigung die letzten beiden Stellen
+                    von Feld "14.1":
                   </p>
                   <div className="rounded border border-zinc-200 overflow-hidden">
                     <img
@@ -295,12 +364,12 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 </section>
                 <section className="space-y-2">
                   <p className="font-bold">
-                    Does the vehicle registration document look different?
+                    Der Fahrzeugschein sieht anders aus?
                   </p>
                   <p>
-                    On older vehicle registration documents, the emissions key
-                    number can also be found in the location marked in red in
-                    the illustration:
+                    Bei alten Fahrzeugscheinen kann die Emissionsschlüsselnr.
+                    auch an der in der Abbildung rot markierten Stelle zu finden
+                    sein:
                   </p>
                   <div className="rounded border border-zinc-200 overflow-hidden">
                     <img
@@ -316,16 +385,19 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
           {result !== null && (
             <div className="space-y-2">
-              <span className="block text-sm font-semibold text-black">
-                Sticker color
-              </span>
+              <div>
+                <span className="block text-sm font-semibold text-black">
+                  Ergebnis
+                </span>
+                <hr className="mt-1 border-zinc-300" />
+              </div>
               <div
                 className={`rounded-lg px-4 py-3 text-sm font-medium text-black ${
                   result === "Invalid emission number."
                     ? "bg-amber-100 text-amber-900"
                     : result === "-1" || result === "-2"
                       ? "bg-amber-100 text-amber-900"
-                      : "bg-zinc-200 text-black"
+                      : "bg-white text-black"
                 }`}
               >
                 {result === "Invalid emission number." ? (
@@ -333,19 +405,17 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 ) : result === "-1" || result === "-2" ? (
                   UNSUPPORTED_MESSAGE
                 ) : (
-                  <div className="flex flex-wrap items-center gap-2">
-                    {getResultItems(result).map(([label, colorClass]) => (
-                      <span
-                        key={label}
-                        className="inline-flex items-center gap-2"
-                      >
-                        <span
-                          className={`inline-block h-5 w-5 shrink-0 rounded ${colorClass}`}
-                          aria-hidden
-                        />
-                        <span>{label}</span>
-                      </span>
-                    ))}
+                  <div className="flex flex-row items-start gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      {getStickerTypes(result).map((t) => (
+                        <StickerCircle key={t} type={t} />
+                      ))}
+                    </div>
+                    {getResultMessage(result) && (
+                      <p className="text-black leading-snug flex-1 min-w-0 pt-1">
+                        {getResultMessage(result)}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -357,7 +427,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             disabled={!allFieldsFilled}
             className="w-full py-3 rounded-lg bg-black text-white font-semibold hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black"
           >
-            Enter
+            Absenden
           </button>
         </form>
       </div>
