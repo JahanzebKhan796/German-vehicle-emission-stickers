@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const VEHICLE_OPTIONS: { value: "Car" | "Truck"; label: string }[] = [
   { value: "Car", label: "Pkw" },
@@ -155,6 +155,25 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   const [emissionKey, setEmissionKey] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [helpExpanded, setHelpExpanded] = useState(false);
+
+  // Notify parent (WordPress) to resize iframe so only one scrollbar shows
+  useEffect(() => {
+    const sendHeight = () => {
+      const height = document.documentElement.scrollHeight;
+      try {
+        window.parent?.postMessage?.(
+          { type: "dust-sticker-resize", height },
+          "*",
+        );
+      } catch {
+        // ignore (e.g. cross-origin)
+      }
+    };
+    sendHeight();
+    const ro = new ResizeObserver(sendHeight);
+    ro.observe(document.body);
+    return () => ro.disconnect();
+  }, [helpExpanded, result]);
 
   const isDiesel = fuelType === "Diesel";
 
