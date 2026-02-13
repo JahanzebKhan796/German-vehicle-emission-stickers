@@ -170,9 +170,14 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
       }
     };
     sendHeight();
+    // After expand/collapse, DOM updates asynchronously; send height again after layout
+    const t = setTimeout(sendHeight, 150);
     const ro = new ResizeObserver(sendHeight);
     ro.observe(document.body);
-    return () => ro.disconnect();
+    return () => {
+      clearTimeout(t);
+      ro.disconnect();
+    };
   }, [helpExpanded, result]);
 
   const isDiesel = fuelType === "Diesel";
