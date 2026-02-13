@@ -235,9 +235,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
           <fieldset className="space-y-3">
-            <legend className="text-sm font-semibold text-black">
-              Fahrzeugart
-            </legend>
+            <legend className="font-semibold text-black">Fahrzeugart</legend>
             <div className="flex gap-6">
               {VEHICLE_OPTIONS.map((option) => (
                 <label
@@ -260,9 +258,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
           {/* Fuel type */}
           <fieldset className="space-y-3">
-            <legend className="text-sm font-semibold text-black">
-              Kraftstoffart
-            </legend>
+            <legend className="font-semibold text-black">Kraftstoffart</legend>
             <div className="flex gap-6">
               {FUEL_OPTIONS.map((option) => (
                 <label
@@ -289,10 +285,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {/* DPF dropdown (only when Diesel) */}
           {isDiesel && (
             <div className="space-y-2">
-              <label
-                htmlFor="dpf"
-                className="block text-sm font-semibold text-black"
-              >
+              <label htmlFor="dpf" className="block font-semibold text-black">
                 Partikelminderungssystem mit PM-Stufe
               </label>
               <select
@@ -315,7 +308,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           <div className="space-y-2">
             <label
               htmlFor="emissionKey"
-              className="block text-sm font-semibold text-black"
+              className="block font-semibold text-black"
             >
               Emissionsschlüssel-Nr.
             </label>
@@ -330,9 +323,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
             {emissionKey.length > 0 && !emissionKeyValid && (
-              <p className="text-sm text-amber-700">
-                Geben Sie genau 2 Ziffern ein.
-              </p>
+              <p className="text-amber-700">Geben Sie genau 2 Ziffern ein.</p>
             )}
           </div>
 
@@ -341,7 +332,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <button
               type="button"
               onClick={() => setHelpExpanded((v) => !v)}
-              className="w-full px-4 py-3 flex items-center justify-between text-left text-sm font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
+              className="w-full px-4 py-3 flex items-center justify-between text-left font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
               aria-expanded={helpExpanded}
             >
               Wo finde ich die Emissionsschlüssel-Nr.?
@@ -353,7 +344,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               </span>
             </button>
             {helpExpanded && (
-              <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black text-sm">
+              <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black">
                 <section className="space-y-2">
                   <p className="font-bold">
                     Alter Fahrzeugschein (bis 30.09.2005)
@@ -410,13 +401,11 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {result !== null && (
             <div className="space-y-2">
               <div>
-                <span className="block text-sm font-semibold text-black">
-                  Ergebnis
-                </span>
+                <span className="block font-semibold text-black">Ergebnis</span>
                 <hr className="mt-1 border-zinc-300" />
               </div>
               <div
-                className={`rounded-lg px-4 py-3 text-sm font-medium text-black ${
+                className={`rounded-lg px-4 py-3 font-medium text-black ${
                   result === "Invalid emission number."
                     ? "bg-amber-100 text-amber-900"
                     : result === "-1" || result === "-2"
@@ -449,7 +438,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           <button
             type="submit"
             disabled={!allFieldsFilled}
-            className="w-full py-3 rounded-lg bg-black text-white font-semibold hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black"
+            className="w-full py-3 rounded-full bg-[#0065a4] text-white font-semibold hover:bg-[#005a94] focus:ring-2 focus:ring-[#0065a4] focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0065a4]"
           >
             Absenden
           </button>
