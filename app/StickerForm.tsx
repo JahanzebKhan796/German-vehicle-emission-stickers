@@ -154,6 +154,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   const [dpf, setDpf] = useState<string>("no DPF");
   const [emissionKey, setEmissionKey] = useState("");
   const [result, setResult] = useState<string | null>(null);
+  const [showEmissionHelp, setShowEmissionHelp] = useState(false);
   // Notify parent (WordPress) to resize iframe so only one scrollbar shows
   useEffect(() => {
     const sendHeight = () => {
@@ -308,11 +309,24 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
           {/* Emission key number */}
           <div className="space-y-2">
-            <label
-              htmlFor="emissionKey"
-              className="block font-semibold text-black"
-            >
-              3. Emissionsschlüssel-Nr.
+            <label htmlFor="emissionKey" className="font-semibold text-black">
+              <span className="inline align-baseline">
+                3. Emissionsschlüssel-Nr.
+              </span>
+              <span
+                className="inline-block ml-0.5"
+                style={{ verticalAlign: "super" }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setShowEmissionHelp(true)}
+                  className="flex items-center justify-center w-4 h-4 rounded-full border border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 text-[10px] font-semibold leading-none"
+                  aria-label="Wo finde ich die Emissionsschlüssel-Nr.?"
+                  title="Wo finde ich die Emissionsschlüssel-Nr.?"
+                >
+                  i
+                </button>
+              </span>
             </label>
             <input
               id="emissionKey"
@@ -377,6 +391,36 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           </div>
         </form>
       </div>
+
+      {/* Emission key help image modal */}
+      {showEmissionHelp && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          onClick={() => setShowEmissionHelp(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Emissionsschlüssel-Nr. finden"
+        >
+          <div
+            className="relative max-h-[90vh] max-w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowEmissionHelp(false)}
+              className="absolute -top-10 right-0 text-white hover:text-zinc-200 text-2xl font-bold leading-none"
+              aria-label="Schließen"
+            >
+              ×
+            </button>
+            <img
+              src="/help/Emissionsnummer.png"
+              alt="Wo finde ich die Emissionsschlüssel-Nr.? Neuer Fahrzeugschein, Alter Fahrzeugschein, Alter Fahrzeugbrief"
+              className="max-h-[85vh] w-auto object-contain rounded-lg shadow-lg"
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
