@@ -366,7 +366,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             </div>
           )}
 
-          <div className="flex justify-end">
+          <div className="flex justify-start">
             <button
               type="submit"
               disabled={!allFieldsFilled}
