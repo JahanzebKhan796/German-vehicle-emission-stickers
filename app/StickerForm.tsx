@@ -155,6 +155,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   const [emissionKey, setEmissionKey] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [showEmissionHelp, setShowEmissionHelp] = useState(false);
+  const [showDpfHelp, setShowDpfHelp] = useState(false);
   // Notify parent (WordPress) to resize iframe so only one scrollbar shows
   useEffect(() => {
     const sendHeight = () => {
@@ -287,9 +288,25 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {isDiesel && (
             <div className="space-y-2">
               <div className="rounded-full border border-zinc-300 bg-white px-5 pt-3 pb-2.5 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:border-transparent">
-                <span className="block text-xs text-zinc-500 mb-1">
-                  Partikelminderungssystem mit PM-Stufe:
-                </span>
+                <div className="mb-1">
+                  <span className="text-xs text-zinc-500">
+                    Partikelminderungssystem mit PM-Stufe:
+                  </span>
+                  <span
+                    className="inline-block ml-0.5"
+                    style={{ verticalAlign: "super" }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setShowDpfHelp(true)}
+                      className="flex items-center justify-center w-4 h-4 rounded-full border border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 text-[10px] font-semibold leading-none"
+                      aria-label="Wo finde ich die PM-Stufe?"
+                      title="Wo finde ich die PM-Stufe?"
+                    >
+                      i
+                    </button>
+                  </span>
+                </div>
                 <select
                   id="dpf"
                   value={dpf}
@@ -402,7 +419,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           aria-label="Emissionsschlüssel-Nr. finden"
         >
           <div
-            className="relative max-h-[80vh] max-w-full bg-[#e0e0e0] rounded-lg shadow-lg p-2"
+            className="relative max-h-[80vh] max-w-full bg-[#d4d4d4] rounded-lg shadow-lg p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -416,6 +433,36 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <img
               src="/help/Emissionsnummer.png"
               alt="Wo finde ich die Emissionsschlüssel-Nr.? Neuer Fahrzeugschein, Alter Fahrzeugschein, Alter Fahrzeugbrief"
+              className="max-h-[72vh] w-auto object-contain rounded"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* DPF / PM-Stufe help image modal (same image for now; replace src when you have the PM image) */}
+      {showDpfHelp && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent"
+          onClick={() => setShowDpfHelp(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="PM-Stufe finden"
+        >
+          <div
+            className="relative max-h-[80vh] max-w-full bg-[#d4d4d4] rounded-lg shadow-lg p-2"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowDpfHelp(false)}
+              className="absolute -top-8 right-0 text-zinc-600 hover:text-zinc-800 text-2xl font-bold leading-none"
+              aria-label="Schließen"
+            >
+              ×
+            </button>
+            <img
+              src="/help/Emissionsnummer.png"
+              alt="Wo finde ich die PM-Stufe?"
               className="max-h-[72vh] w-auto object-contain rounded"
             />
           </div>
