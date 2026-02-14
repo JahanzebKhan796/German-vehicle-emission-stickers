@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 
 const VEHICLE_OPTIONS: { value: "Car" | "Truck"; label: string }[] = [
-  { value: "Car", label: "Pkw" },
-  { value: "Truck", label: "Lkw" },
+  { value: "Car", label: "PKW und Wohnmobile bis 2,8t" },
+  {
+    value: "Truck",
+    label: "LKW / Nutzfahrzeuge (M2, M3, N und Wohnmobil ab 2,8t)",
+  },
 ];
 const FUEL_OPTIONS: { value: "Petrol" | "Diesel"; label: string }[] = [
   { value: "Petrol", label: "Kfz mit Ottomotor (Benzin, Flüssiggas, Erdgas)" },
@@ -66,22 +69,20 @@ function getStickerTypes(value: string): ("1" | "2" | "3" | "4")[] {
   return [];
 }
 
-const STICKER_STYLES: Record<"1" | "2" | "3" | "4", { circle: string }> = {
-  "1": { circle: "border-zinc-300 bg-white" },
-  "2": { circle: "bg-red-500 border-red-500" },
-  "3": { circle: "bg-amber-400 border-amber-400" },
-  "4": { circle: "bg-green-500 border-green-500" },
+const STICKER_IMAGES: Record<"2" | "3" | "4", string> = {
+  "2": "/help/Umwelt_rot.png",
+  "3": "/help/Umwelt_gelb.png",
+  "4": "/help/Umwelt_grün.png",
 };
 
-function StickerCircle({ type }: { type: "1" | "2" | "3" | "4" }) {
-  const style = STICKER_STYLES[type];
-  const size = 80;
+const STICKER_SIZE = 80;
 
+function StickerCircle({ type }: { type: "1" | "2" | "3" | "4" }) {
   if (type === "1") {
     return (
       <div
         className="shrink-0 rounded-full border-10 border-zinc-300 bg-white flex items-center justify-center"
-        style={{ width: size, height: size }}
+        style={{ width: STICKER_SIZE, height: STICKER_SIZE }}
         aria-hidden
       >
         <span className="sr-only">Keine Plakette</span>
@@ -99,15 +100,14 @@ function StickerCircle({ type }: { type: "1" | "2" | "3" | "4" }) {
     );
   }
 
+  const src = STICKER_IMAGES[type];
   return (
-    <div
-      className={`shrink-0 rounded-full border-10 flex flex-col items-center justify-start pt-2 pb-1 ${style.circle}`}
-      style={{ width: size, height: size }}
-      aria-hidden
-    >
-      <span className="text-3xl font-bold leading-none text-white">{type}</span>
-      <div className="w-10 h-3 mt-1 bg-white/90 border border-white/50" />
-    </div>
+    <img
+      src={src}
+      alt={`Feinstaubplakette ${type}`}
+      className="shrink-0 w-auto h-auto object-contain"
+      style={{ width: STICKER_SIZE, height: STICKER_SIZE }}
+    />
   );
 }
 
@@ -231,7 +231,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
   return (
     <main className="bg-[#e8e8e8] flex justify-start pt-0 pl-3 pr-6 pb-6">
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-3xl">
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
           <fieldset className="space-y-3">
@@ -285,7 +285,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {/* DPF dropdown (only when Diesel) */}
           {isDiesel && (
             <div className="space-y-2">
-              <div className="rounded-lg border border-zinc-300 bg-white px-4 pt-3 pb-2.5 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:border-transparent">
+              <div className="rounded-full border border-zinc-300 bg-white px-5 pt-3 pb-2.5 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:border-transparent">
                 <span className="block text-xs text-zinc-500 mb-1">
                   Partikelminderungssystem mit PM-Stufe:
                 </span>
@@ -322,7 +322,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
               placeholder="Geben Sie 2 Ziffern ein"
               maxLength={2}
-              className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+              className="w-full px-5 py-2.5 rounded-full border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
             {emissionKey.length > 0 && !emissionKeyValid && (
               <p className="text-amber-700">Geben Sie genau 2 Ziffern ein.</p>
@@ -336,7 +336,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 <hr className="mt-1 border-zinc-300" />
               </div>
               <div
-                className={`rounded-lg px-4 py-3 font-medium text-black ${
+                className={`rounded-full px-5 py-3 font-medium text-black ${
                   result === "Invalid emission number."
                     ? "bg-amber-100 text-amber-900"
                     : result === "-1" || result === "-2"
