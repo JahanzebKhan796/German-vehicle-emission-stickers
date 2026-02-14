@@ -7,8 +7,8 @@ const VEHICLE_OPTIONS: { value: "Car" | "Truck"; label: string }[] = [
   { value: "Truck", label: "Lkw" },
 ];
 const FUEL_OPTIONS: { value: "Petrol" | "Diesel"; label: string }[] = [
-  { value: "Petrol", label: "Benzin, Flüssiggas, Erdgas" },
-  { value: "Diesel", label: "Diesel" },
+  { value: "Petrol", label: "Kfz mit Ottomotor (Benzin, Flüssiggas, Erdgas)" },
+  { value: "Diesel", label: "Kfz mit Dieselmotor (Diesel)" },
 ];
 const DPF_OPTIONS: { value: string; label: string }[] = [
   { value: "no DPF", label: "kein Partikelminderungssystem" },
@@ -151,10 +151,11 @@ function findRow(
 export default function StickerForm({ rows }: { rows: string[][] }) {
   const [vehicleType, setVehicleType] = useState<"Car" | "Truck" | "">("");
   const [fuelType, setFuelType] = useState<"Petrol" | "Diesel" | "">("");
-  const [dpf, setDpf] = useState<string>("");
+  const [dpf, setDpf] = useState<string>("no DPF");
   const [emissionKey, setEmissionKey] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [helpExpanded, setHelpExpanded] = useState(false);
+  const [pmHelpExpanded, setPmHelpExpanded] = useState(false);
 
   // Notify parent (WordPress) to resize iframe so only one scrollbar shows
   useEffect(() => {
@@ -178,7 +179,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
       clearTimeout(t);
       ro.disconnect();
     };
-  }, [helpExpanded, result]);
+  }, [helpExpanded, pmHelpExpanded, result]);
 
   const isDiesel = fuelType === "Diesel";
 
@@ -231,11 +232,11 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
   return (
     <main className="min-h-screen bg-white flex justify-start pt-0 pl-0 pr-6 pb-6">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-2xl">
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
           <fieldset className="space-y-3">
-            <legend className="font-semibold text-black">Fahrzeugart</legend>
+            <legend className="font-semibold text-black">1. Fahrzeugart</legend>
             <div className="flex gap-6">
               {VEHICLE_OPTIONS.map((option) => (
                 <label
@@ -258,7 +259,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
           {/* Fuel type */}
           <fieldset className="space-y-3">
-            <legend className="font-semibold text-black">Kraftstoffart</legend>
+            <legend className="font-semibold text-black">2. Antriebsart</legend>
             <div className="flex gap-6">
               {FUEL_OPTIONS.map((option) => (
                 <label
@@ -272,7 +273,10 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                     checked={fuelType === option.value}
                     onChange={() => {
                       setFuelType(option.value);
-                      if (option.value !== "Diesel") setDpf("");
+                      if (option.value !== "Diesel") {
+                        setDpf("no DPF");
+                        setPmHelpExpanded(false);
+                      }
                     }}
                     className="w-4 h-4 text-black border-zinc-400 focus:ring-2 focus:ring-zinc-500"
                   />
@@ -285,22 +289,78 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {/* DPF dropdown (only when Diesel) */}
           {isDiesel && (
             <div className="space-y-2">
-              <label htmlFor="dpf" className="block font-semibold text-black">
-                Partikelminderungssystem mit PM-Stufe
-              </label>
-              <select
-                id="dpf"
-                value={dpf}
-                onChange={(e) => setDpf(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg border border-zinc-300 bg-white text-black focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
-              >
-                <option value="">Auswählen</option>
-                {DPF_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <div className="rounded-lg border border-zinc-300 bg-white px-4 pt-3 pb-2.5 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:border-transparent">
+                <span className="block text-xs text-zinc-500 mb-1">
+                  Partikelminderungssystem mit PM-Stufe:
+                </span>
+                <select
+                  id="dpf"
+                  value={dpf}
+                  onChange={(e) => setDpf(e.target.value)}
+                  className="w-full min-h-[1.5em] border-none bg-transparent p-0 text-black focus:ring-0 focus:outline-none cursor-pointer"
+                  aria-label="Partikelminderungssystem mit PM-Stufe"
+                >
+                  {DPF_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Expandable help: Where can I find the PM-Stufe? */}
+              <div className="border border-zinc-300 rounded-lg overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setPmHelpExpanded((v) => !v)}
+                  className="w-full px-4 py-3 flex items-center justify-between text-left font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
+                  aria-expanded={pmHelpExpanded}
+                >
+                  Wo finde ich die PM-Stufe?
+                  <span
+                    className={`shrink-0 ml-2 transition-transform ${pmHelpExpanded ? "rotate-180" : ""}`}
+                    aria-hidden
+                  >
+                    ▼
+                  </span>
+                </button>
+                {pmHelpExpanded && (
+                  <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black">
+                    <p>
+                      Ob ihr Fahrzeug mit Dieselmotor mit einem
+                      Partikelminderungssystem mit &quot;PM-Stufe&quot;
+                      ausgestattet ist, können Sie Ihrer Zulassungsbescheinigung
+                      im Feld 22 entnehmen:
+                    </p>
+                    <section className="space-y-2">
+                      <p className="font-bold">
+                        Beispiel: Nachgerüstetes Partikelminderungssystem der
+                        Stufe &quot;PM2&quot;
+                      </p>
+                      <div className="rounded border border-zinc-200 overflow-hidden">
+                        <img
+                          src="/help/image4.png"
+                          alt="Zulassungsbescheinigung Feld 22 mit PM2 nachger. hervorgehoben"
+                          className="w-full h-auto max-h-64 object-contain object-top-left"
+                        />
+                      </div>
+                    </section>
+                    <section className="space-y-2">
+                      <p className="font-bold">
+                        Beispiel: Partikelminderungssystem der Stufe
+                        &quot;PM5&quot; ab Werk
+                      </p>
+                      <div className="rounded border border-zinc-200 overflow-hidden">
+                        <img
+                          src="/help/image5.png"
+                          alt="Zulassungsbescheinigung Feld 22 mit PM 5 hervorgehoben"
+                          className="w-full h-auto max-h-64 object-contain object-top-left"
+                        />
+                      </div>
+                    </section>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -310,7 +370,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               htmlFor="emissionKey"
               className="block font-semibold text-black"
             >
-              Emissionsschlüssel-Nr.
+              3. Emissionsschlüssel-Nr.
             </label>
             <input
               id="emissionKey"
