@@ -171,12 +171,14 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
       }
     };
     sendHeight();
-    // After expand/collapse, DOM updates asynchronously; send height again after layout
-    const t = setTimeout(sendHeight, 150);
+    // After expand/collapse, DOM updates asynchronously; send height multiple times
+    // so we catch the correct (smaller) height when user collapses
+    const delays = [100, 250, 500, 800];
+    const timers = delays.map((ms) => setTimeout(sendHeight, ms));
     const ro = new ResizeObserver(sendHeight);
     ro.observe(document.body);
     return () => {
-      clearTimeout(t);
+      timers.forEach((t) => clearTimeout(t));
       ro.disconnect();
     };
   }, [helpExpanded, pmHelpExpanded, result]);
