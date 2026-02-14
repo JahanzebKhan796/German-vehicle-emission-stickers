@@ -402,7 +402,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           aria-label="Emissionsschlüssel-Nr. finden"
         >
           <div
-            className="relative max-h-[90vh] max-w-full bg-white rounded-lg shadow-lg p-2"
+            className="relative max-h-[80vh] max-w-full bg-white rounded-lg shadow-lg p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -416,7 +416,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <img
               src="/help/Emissionsnummer.png"
               alt="Wo finde ich die Emissionsschlüssel-Nr.? Neuer Fahrzeugschein, Alter Fahrzeugschein, Alter Fahrzeugbrief"
-              className="max-h-[85vh] w-auto object-contain rounded"
+              className="max-h-[72vh] w-auto object-contain rounded"
             />
           </div>
         </div>
