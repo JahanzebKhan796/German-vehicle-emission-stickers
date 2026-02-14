@@ -402,7 +402,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           aria-label="Emissionsschlüssel-Nr. finden"
         >
           <div
-            className="relative max-h-[80vh] max-w-full bg-white rounded-lg shadow-lg p-2"
+            className="relative max-h-[80vh] max-w-full bg-[#e0e0e0] rounded-lg shadow-lg p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
