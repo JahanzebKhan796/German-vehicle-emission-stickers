@@ -154,9 +154,6 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   const [dpf, setDpf] = useState<string>("no DPF");
   const [emissionKey, setEmissionKey] = useState("");
   const [result, setResult] = useState<string | null>(null);
-  const [helpExpanded, setHelpExpanded] = useState(false);
-  const [pmHelpExpanded, setPmHelpExpanded] = useState(false);
-
   // Notify parent (WordPress) to resize iframe so only one scrollbar shows
   useEffect(() => {
     const sendHeight = () => {
@@ -181,7 +178,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
       timers.forEach((t) => clearTimeout(t));
       ro.disconnect();
     };
-  }, [helpExpanded, pmHelpExpanded, result]);
+  }, [result]);
 
   const isDiesel = fuelType === "Diesel";
 
@@ -233,7 +230,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   }
 
   return (
-    <main className="bg-[#e8e8e8] flex justify-start pt-0 pl-0 pr-6 pb-6">
+    <main className="bg-[#e8e8e8] flex justify-start pt-0 pl-3 pr-6 pb-6">
       <div className="w-full max-w-2xl">
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
@@ -275,10 +272,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                     checked={fuelType === option.value}
                     onChange={() => {
                       setFuelType(option.value);
-                      if (option.value !== "Diesel") {
-                        setDpf("no DPF");
-                        setPmHelpExpanded(false);
-                      }
+                      if (option.value !== "Diesel") setDpf("no DPF");
                     }}
                     className="w-4 h-4 text-black border-zinc-400 focus:ring-2 focus:ring-zinc-500"
                   />
@@ -309,60 +303,6 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                   ))}
                 </select>
               </div>
-
-              {/* Expandable help: Where can I find the PM-Stufe? */}
-              <div className="border border-zinc-300 rounded-lg overflow-hidden">
-                <button
-                  type="button"
-                  onClick={() => setPmHelpExpanded((v) => !v)}
-                  className="w-full px-4 py-3 flex items-center justify-between text-left font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
-                  aria-expanded={pmHelpExpanded}
-                >
-                  Wo finde ich die PM-Stufe?
-                  <span
-                    className={`shrink-0 ml-2 transition-transform ${pmHelpExpanded ? "rotate-180" : ""}`}
-                    aria-hidden
-                  >
-                    ▼
-                  </span>
-                </button>
-                {pmHelpExpanded && (
-                  <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black">
-                    <p>
-                      Ob ihr Fahrzeug mit Dieselmotor mit einem
-                      Partikelminderungssystem mit &quot;PM-Stufe&quot;
-                      ausgestattet ist, können Sie Ihrer Zulassungsbescheinigung
-                      im Feld 22 entnehmen:
-                    </p>
-                    <section className="space-y-2">
-                      <p className="font-bold">
-                        Beispiel: Nachgerüstetes Partikelminderungssystem der
-                        Stufe &quot;PM2&quot;
-                      </p>
-                      <div className="rounded border border-zinc-200 overflow-hidden">
-                        <img
-                          src="/help/image4.png"
-                          alt="Zulassungsbescheinigung Feld 22 mit PM2 nachger. hervorgehoben"
-                          className="w-full h-auto max-h-64 object-contain object-top-left"
-                        />
-                      </div>
-                    </section>
-                    <section className="space-y-2">
-                      <p className="font-bold">
-                        Beispiel: Partikelminderungssystem der Stufe
-                        &quot;PM5&quot; ab Werk
-                      </p>
-                      <div className="rounded border border-zinc-200 overflow-hidden">
-                        <img
-                          src="/help/image5.png"
-                          alt="Zulassungsbescheinigung Feld 22 mit PM 5 hervorgehoben"
-                          className="w-full h-auto max-h-64 object-contain object-top-left"
-                        />
-                      </div>
-                    </section>
-                  </div>
-                )}
-              </div>
             </div>
           )}
 
@@ -386,77 +326,6 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             />
             {emissionKey.length > 0 && !emissionKeyValid && (
               <p className="text-amber-700">Geben Sie genau 2 Ziffern ein.</p>
-            )}
-          </div>
-
-          {/* Expandable help: Where can I find the emissions key number? */}
-          <div className="border border-zinc-300 rounded-lg overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setHelpExpanded((v) => !v)}
-              className="w-full px-4 py-3 flex items-center justify-between text-left font-semibold text-black bg-zinc-50 hover:bg-zinc-100 transition-colors"
-              aria-expanded={helpExpanded}
-            >
-              Wo finde ich die Emissionsschlüssel-Nr.?
-              <span
-                className={`shrink-0 ml-2 transition-transform ${helpExpanded ? "rotate-180" : ""}`}
-                aria-hidden
-              >
-                ▼
-              </span>
-            </button>
-            {helpExpanded && (
-              <div className="px-4 pb-4 pt-1 space-y-4 bg-white border-t border-zinc-200 text-black">
-                <section className="space-y-2">
-                  <p className="font-bold">
-                    Alter Fahrzeugschein (bis 30.09.2005)
-                  </p>
-                  <p>
-                    Im Fahrzeugschein die letzten beiden Stellen der
-                    Schlüsselnr. "zu 1":
-                  </p>
-                  <div className="rounded border border-zinc-200 overflow-hidden">
-                    <img
-                      src="/help/image1.png"
-                      alt="Old vehicle registration certificate showing key number 'to 1' with last two digits highlighted"
-                      className="w-full h-auto max-h-64 object-contain object-top-left"
-                    />
-                  </div>
-                </section>
-                <section className="space-y-2">
-                  <p className="font-bold">
-                    Zulassungsbescheinigung I (ab 01.10.2005)
-                  </p>
-                  <p>
-                    In der Zulassungsbescheinigung die letzten beiden Stellen
-                    von Feld "14.1":
-                  </p>
-                  <div className="rounded border border-zinc-200 overflow-hidden">
-                    <img
-                      src="/help/image2.png"
-                      alt="Registration certificate Part I showing field 14.1 with last two digits highlighted"
-                      className="w-full h-auto max-h-64 object-contain object-top-left"
-                    />
-                  </div>
-                </section>
-                <section className="space-y-2">
-                  <p className="font-bold">
-                    Der Fahrzeugschein sieht anders aus?
-                  </p>
-                  <p>
-                    Bei alten Fahrzeugscheinen kann die Emissionsschlüsselnr.
-                    auch an der in der Abbildung rot markierten Stelle zu finden
-                    sein:
-                  </p>
-                  <div className="rounded border border-zinc-200 overflow-hidden">
-                    <img
-                      src="/help/image3.png"
-                      alt="Older vehicle registration document with emissions key number location marked in red"
-                      className="w-full h-auto max-h-64 object-contain object-top-left"
-                    />
-                  </div>
-                </section>
-              </div>
             )}
           </div>
 
