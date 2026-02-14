@@ -495,13 +495,15 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={!allFieldsFilled}
-            className="w-full py-3 rounded-full bg-[#0065a4] text-white font-semibold hover:bg-[#005a94] focus:ring-2 focus:ring-[#0065a4] focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0065a4]"
-          >
-            Plakettenart ermitteln
-          </button>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={!allFieldsFilled}
+              className="max-w-xs py-3 px-8 rounded-full bg-[#0065a4] text-white font-semibold hover:bg-[#005a94] focus:ring-2 focus:ring-[#0065a4] focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0065a4]"
+            >
+              Plakettenart ermitteln
+            </button>
+          </div>
         </form>
       </div>
     </main>
