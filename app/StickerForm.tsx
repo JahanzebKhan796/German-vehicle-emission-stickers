@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 const VEHICLE_OPTIONS: { value: "Car" | "Truck"; label: string }[] = [
-  { value: "Car", label: "PKW und Wohnmobile bis 2,8t" },
+  { value: "Car", label: "PKWw und Wohnmobile bis 2,8t" },
   {
     value: "Truck",
     label: "LKW / Nutzfahrzeuge (M2, M3, N und Wohnmobil ab 2,8t)",
