@@ -231,7 +231,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   }
 
   return (
-    <main className="min-h-screen bg-white flex justify-start pt-0 pl-0 pr-6 pb-6">
+    <main className="min-h-screen bg-[#e8e8e8] flex justify-start pt-0 pl-0 pr-6 pb-6">
       <div className="w-full max-w-2xl">
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
