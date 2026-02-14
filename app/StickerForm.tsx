@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 const VEHICLE_OPTIONS: { value: "Car" | "Truck"; label: string }[] = [
-  { value: "Car", label: "PKWw und Wohnmobile bis 2,8t" },
+  { value: "Car", label: "PKW und Wohnmobile bis 2,8t" },
   {
     value: "Truck",
     label: "LKW / Nutzfahrzeuge (M2, M3, N und Wohnmobil ab 2,8t)",
@@ -231,7 +231,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
   return (
     <main className="bg-[#e8e8e8] flex justify-start pt-0 pl-3 pr-6 pb-6">
-      <div className="w-full max-w-[1080px]">
+      <div className="w-full max-w-3xl">
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
           <fieldset className="space-y-3">
