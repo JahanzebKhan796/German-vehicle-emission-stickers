@@ -395,20 +395,20 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
       {/* Emission key help image modal */}
       {showEmissionHelp && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent"
           onClick={() => setShowEmissionHelp(false)}
           role="dialog"
           aria-modal="true"
           aria-label="Emissionsschlüssel-Nr. finden"
         >
           <div
-            className="relative max-h-[90vh] max-w-full"
+            className="relative max-h-[90vh] max-w-full bg-white rounded-lg shadow-lg p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setShowEmissionHelp(false)}
-              className="absolute -top-10 right-0 text-white hover:text-zinc-200 text-2xl font-bold leading-none"
+              className="absolute -top-8 right-0 text-zinc-600 hover:text-zinc-800 text-2xl font-bold leading-none"
               aria-label="Schließen"
             >
               ×
@@ -416,7 +416,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <img
               src="/help/Emissionsnummer.png"
               alt="Wo finde ich die Emissionsschlüssel-Nr.? Neuer Fahrzeugschein, Alter Fahrzeugschein, Alter Fahrzeugbrief"
-              className="max-h-[85vh] w-auto object-contain rounded-lg shadow-lg"
+              className="max-h-[85vh] w-auto object-contain rounded"
             />
           </div>
         </div>
