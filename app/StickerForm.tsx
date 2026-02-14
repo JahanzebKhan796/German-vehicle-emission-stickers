@@ -322,7 +322,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
               placeholder="Geben Sie 2 Ziffern ein"
               maxLength={2}
-              className="w-full px-5 py-2.5 rounded-full border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+              className="w-full px-5 py-3.5 rounded-full border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
             {emissionKey.length > 0 && !emissionKeyValid && (
               <p className="text-amber-700">Geben Sie genau 2 Ziffern ein.</p>
