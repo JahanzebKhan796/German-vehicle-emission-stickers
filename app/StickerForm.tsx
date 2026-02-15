@@ -232,8 +232,8 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   }
 
   return (
-    <main className="bg-[#e8e8e8] flex justify-start pt-0 pl-3 pr-6 pb-6">
-      <div className="w-full max-w-[1000px]">
+    <main className="bg-white flex justify-start pt-0 pl-3 pr-6 pb-6">
+      <div className="w-full max-w-[800px]">
         <form className="space-y-8" onSubmit={handleSubmit}>
           {/* Vehicle type */}
           <fieldset className="space-y-3">
@@ -287,7 +287,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           {/* DPF dropdown (only when Diesel) */}
           {isDiesel && (
             <div className="space-y-2">
-              <div className="rounded-full border border-zinc-300 bg-white px-5 pt-3 pb-2.5 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:border-transparent">
+              <div className="rounded-full border border-zinc-300 bg-[#f0f0f0] px-5 pt-3 pb-2.5 focus-within:ring-2 focus-within:ring-zinc-500 focus-within:border-transparent">
                 <div className="mb-1">
                   <span className="text-xs text-zinc-500">
                     Partikelminderungssystem mit PM-Stufe:
@@ -353,7 +353,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
               placeholder="Geben Sie 2 Ziffern ein"
               maxLength={2}
-              className="w-full px-5 py-3.5 rounded-full border border-zinc-300 bg-white text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
+              className="w-full px-5 py-3.5 rounded-full border border-zinc-300 bg-[#f0f0f0] text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
             {emissionKey.length > 0 && !emissionKeyValid && (
               <p className="text-amber-700">Geben Sie genau 2 Ziffern ein.</p>
@@ -372,7 +372,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                     ? "bg-amber-100 text-amber-900"
                     : result === "-1" || result === "-2"
                       ? "bg-amber-100 text-amber-900"
-                      : "bg-white text-black"
+                      : "bg-[#f0f0f0] text-black"
                 }`}
               >
                 {result === "Invalid emission number." ? (
