@@ -13,6 +13,83 @@ const FUEL_OPTIONS: { value: "Petrol" | "Diesel"; label: string }[] = [
   { value: "Petrol", label: "Kfz mit Ottomotor (Benzin, Flüssiggas, Erdgas)" },
   { value: "Diesel", label: "Kfz mit Dieselmotor (Diesel)" },
 ];
+/** Emission key codes that always return 4 (green) for any vehicle type, fuel and PM. */
+const ALWAYS_GREEN_EMISSION_KEYS = new Set([
+  "A0",
+  "B0",
+  "C0",
+  "D0",
+  "E0",
+  "F0",
+  "G0",
+  "H0",
+  "I0",
+  "J0",
+  "K0",
+  "L0",
+  "M0",
+  "N0",
+  "O0",
+  "P0",
+  "Q0",
+  "R0",
+  "S0",
+  "T0",
+  "U0",
+  "V0",
+  "W0",
+  "X0",
+  "Y0",
+  "ZA",
+  "ZB",
+  "ZC",
+  "ZD",
+  "ZE",
+  "ZF",
+  "ZG",
+  "ZH",
+  "ZI",
+  "ZJ",
+  "ZK",
+  "ZL",
+  "BA",
+  "BB",
+  "BC",
+  "AA",
+  "AB",
+  "AC",
+  "AD",
+  "AE",
+  "AF",
+  "AG",
+  "AH",
+  "AI",
+  "CG",
+  "BH",
+  "BI",
+  "AJ",
+  "AK",
+  "AL",
+  "DG",
+  "CH",
+  "CI",
+  "AM",
+  "AN",
+  "AO",
+  "AP",
+  "AQ",
+  "AR",
+  "EA",
+  "EB",
+  "EC",
+  "ZX",
+  "ZY",
+  "ZZ",
+  "AX",
+  "AY",
+  "AZ",
+]);
+
 const DPF_OPTIONS: { value: string; label: string }[] = [
   { value: "no DPF", label: "kein Partikelminderungssystem" },
   { value: "PM01/PMK01", label: "PM01/PMK01" },
@@ -184,7 +261,10 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
   const isDiesel = fuelType === "Diesel";
 
-  const emissionKeyValid = /^\d{2}$/.test(emissionKey.trim());
+  // Allow submit for any 2 alphanumeric chars; validity is checked on submit
+  const emissionKeyValid =
+    emissionKey.trim().length === 2 &&
+    /^[A-Za-z0-9]{2}$/.test(emissionKey.trim());
 
   const allFieldsFilled =
     !!vehicleType &&
@@ -199,15 +279,37 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
 
     if (!vehicleType) return;
 
+    if (vehicleType === "Truck" && fuelType === "Diesel" && dpf === "PM5") {
+      setTimeout(() => setResult("Sorry"), 80);
+      return;
+    }
+
     const key = emissionKey.trim();
+    const keyUpper = key.toUpperCase();
+    if (ALWAYS_GREEN_EMISSION_KEYS.has(keyUpper)) {
+      setTimeout(() => setResult("4"), 80);
+      return;
+    }
     if (!/^\d{2}$/.test(key)) {
-      setTimeout(() => setResult("Invalid emission number."), 80);
+      setTimeout(
+        () =>
+          setResult(
+            "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!",
+          ),
+        80,
+      );
       return;
     }
 
     const row = findRow(rows, vehicleType, key);
     if (!row) {
-      setTimeout(() => setResult("Invalid emission number."), 80);
+      setTimeout(
+        () =>
+          setResult(
+            "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!",
+          ),
+        80,
+      );
       return;
     }
 
@@ -217,7 +319,13 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
     } else {
       const colIndex = DPF_TO_COLUMN_INDEX[dpf];
       if (colIndex === undefined) {
-        setTimeout(() => setResult("Invalid emission number."), 80);
+        setTimeout(
+          () =>
+            setResult(
+              "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!",
+            ),
+          80,
+        );
         return;
       }
       resultValue = row[colIndex] ?? "";
@@ -227,8 +335,11 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
   }
 
   function handleEmissionKeyChange(value: string) {
-    const digitsOnly = value.replace(/\D/g, "").slice(0, 2);
-    setEmissionKey(digitsOnly);
+    const alphanumeric = value
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 2)
+      .toUpperCase();
+    setEmissionKey(alphanumeric);
   }
 
   return (
@@ -351,13 +462,10 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               inputMode="numeric"
               value={emissionKey}
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
-              placeholder="Geben Sie 2 Ziffern ein"
+              placeholder="Emissionsschlüssel-Nr.*"
               maxLength={2}
               className="w-full px-5 py-3.5 rounded-full border border-zinc-300 bg-[#f0f0f0] text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
-            {emissionKey.length > 0 && !emissionKeyValid && (
-              <p className="text-amber-700">Geben Sie genau 2 Ziffern ein.</p>
-            )}
           </div>
 
           {result !== null && (
@@ -368,14 +476,16 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               </div>
               <div
                 className={`rounded-full px-5 py-3 font-medium text-black ${
-                  result === "Invalid emission number."
+                  result ===
+                  "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!"
                     ? "bg-amber-100 text-amber-900"
                     : result === "-1" || result === "-2"
                       ? "bg-amber-100 text-amber-900"
                       : "bg-[#f0f0f0] text-black"
                 }`}
               >
-                {result === "Invalid emission number." ? (
+                {result ===
+                "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!" ? (
                   result
                 ) : result === "-1" || result === "-2" ? (
                   UNSUPPORTED_MESSAGE
