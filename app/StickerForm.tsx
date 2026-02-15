@@ -425,7 +425,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <button
               type="button"
               onClick={() => setShowEmissionHelp(false)}
-              className="absolute -top-8 right-0 text-zinc-600 hover:text-zinc-800 text-2xl font-bold leading-none"
+              className="absolute top-2 right-2 text-zinc-600 hover:text-zinc-800 text-2xl font-bold leading-none"
               aria-label="Schließen"
             >
               ×
@@ -455,7 +455,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <button
               type="button"
               onClick={() => setShowDpfHelp(false)}
-              className="absolute -top-8 right-0 text-zinc-600 hover:text-zinc-800 text-2xl font-bold leading-none"
+              className="absolute top-2 right-2 text-zinc-600 hover:text-zinc-800 text-2xl font-bold leading-none"
               aria-label="Schließen"
             >
               ×
