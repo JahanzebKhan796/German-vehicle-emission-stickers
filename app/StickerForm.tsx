@@ -461,7 +461,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               ×
             </button>
             <img
-              src="/help/second.png"
+              src="/help/Partikelminderungssystem.png"
               alt="Wo finde ich die PM-Stufe?"
               className="max-h-[72vh] w-auto object-contain rounded"
             />
