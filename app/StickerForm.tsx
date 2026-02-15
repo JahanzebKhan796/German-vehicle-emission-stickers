@@ -459,7 +459,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
             <input
               id="emissionKey"
               type="text"
-              inputMode="numeric"
+              inputMode="text"
               value={emissionKey}
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
               placeholder="Emissionsschlüssel-Nr.*"
