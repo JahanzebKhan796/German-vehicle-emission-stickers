@@ -280,7 +280,13 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
     if (!vehicleType) return;
 
     if (vehicleType === "Truck" && fuelType === "Diesel" && dpf === "PM5") {
-      setTimeout(() => setResult("Sorry"), 80);
+      setTimeout(
+        () =>
+          setResult(
+            "Die gewählte Kombination von Fahrzeugart, PM-Stufe/-Klasse und Emissionsschlüsselnummer ist nicht möglich / nicht vorgesehen. Bitte überprüfen Sie die Eingabe!",
+          ),
+        80,
+      );
       return;
     }
 
@@ -477,7 +483,9 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               <div
                 className={`rounded-full px-5 py-3 font-medium text-black ${
                   result ===
-                  "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!"
+                    "Die gewählte Kombination von Fahrzeugart, PM-Stufe/-Klasse und Emissionsschlüsselnummer ist nicht möglich / nicht vorgesehen. Bitte überprüfen Sie die Eingabe!" ||
+                  result ===
+                    "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!"
                     ? "bg-amber-100 text-amber-900"
                     : result === "-1" || result === "-2"
                       ? "bg-amber-100 text-amber-900"
@@ -485,7 +493,10 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 }`}
               >
                 {result ===
-                "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!" ? (
+                "Die gewählte Kombination von Fahrzeugart, PM-Stufe/-Klasse und Emissionsschlüsselnummer ist nicht möglich / nicht vorgesehen. Bitte überprüfen Sie die Eingabe!" ? (
+                  result
+                ) : result ===
+                  "Die eingegebene Emissionsschlüsselnummer ist nicht gültig. Bitte überprüfen Sie die Eingabe!" ? (
                   result
                 ) : result === "-1" || result === "-2" ? (
                   UNSUPPORTED_MESSAGE
