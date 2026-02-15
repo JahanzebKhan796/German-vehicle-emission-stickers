@@ -380,14 +380,14 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
                 ) : result === "-1" || result === "-2" ? (
                   UNSUPPORTED_MESSAGE
                 ) : (
-                  <div className="flex flex-row items-start gap-4">
+                  <div className="flex flex-row items-center gap-4">
                     <div className="flex flex-wrap items-center gap-3">
                       {getStickerTypes(result).map((t) => (
                         <StickerCircle key={t} type={t} />
                       ))}
                     </div>
                     {getResultMessage(result) && (
-                      <p className="text-black leading-snug flex-1 min-w-0 pt-1">
+                      <p className="text-black leading-snug flex-1 min-w-0">
                         {getResultMessage(result)}
                       </p>
                     )}
@@ -419,7 +419,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           aria-label="Emissionsschlüssel-Nr. finden"
         >
           <div
-            className="relative max-h-[80vh] max-w-full bg-[#d4d4d4] rounded-lg shadow-lg p-2"
+            className="relative max-h-[80vh] max-w-full bg-white border border-zinc-200 rounded-lg shadow-[0_25px_60px_-12px_rgba(0,0,0,0.4)] p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -449,7 +449,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
           aria-label="PM-Stufe finden"
         >
           <div
-            className="relative max-h-[80vh] max-w-full bg-[#d4d4d4] rounded-lg shadow-lg p-2"
+            className="relative max-h-[80vh] max-w-full bg-white border border-zinc-200 rounded-lg shadow-[0_25px_60px_-12px_rgba(0,0,0,0.4)] p-2"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -461,7 +461,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               ×
             </button>
             <img
-              src="/help/Emissionsnummer.png"
+              src="/help/second.png"
               alt="Wo finde ich die PM-Stufe?"
               className="max-h-[72vh] w-auto object-contain rounded"
             />
