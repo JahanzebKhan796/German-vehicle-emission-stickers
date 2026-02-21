@@ -468,7 +468,7 @@ export default function StickerForm({ rows }: { rows: string[][] }) {
               inputMode="text"
               value={emissionKey}
               onChange={(e) => handleEmissionKeyChange(e.target.value)}
-              placeholder="Emissionsschlüssel-Nr.*"
+              placeholder="Nur letzten2 Ziffern"
               maxLength={2}
               className="w-full px-5 py-3.5 rounded-full border border-zinc-300 bg-[#f0f0f0] text-black placeholder-zinc-500 focus:ring-2 focus:ring-zinc-500 focus:border-transparent"
             />
